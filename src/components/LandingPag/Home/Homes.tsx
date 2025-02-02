@@ -1,12 +1,13 @@
 "use client";
+
 import { useState, useEffect } from "react";
-import { fetchAllStories } from "@/utils/api";  
-import { Story } from "@/components/type";    
+import { fetchAllStories } from "@/utils/api";
+import { Story } from "@/components/type";
 
 export default function Home() {
-  const [stories, setStories] = useState<Story[]>([]); 
-  const [loading, setLoading] = useState<boolean>(true); 
-  const [error, setError] = useState<string | null>(null); 
+  const [stories, setStories] = useState<Story[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadStories = async () => {
@@ -21,23 +22,31 @@ export default function Home() {
     };
 
     loadStories();
-  }, []); 
+  }, []);
 
   if (loading) {
-    return <div className="text-center py-8">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center py-8">
+        <span className="text-xl font-semibold text-gray-600">Loading...</span>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-center py-8 text-red-600">{error}</div>;
+    return (
+      <div className="flex justify-center items-center py-8">
+        <span className="text-xl font-semibold text-red-600">{error}</span>
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="container mx-auto px-6 py-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         {stories.map((story) => (
           <div
             key={story.id}
-            className="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200"
+            className="bg-white shadow-xl rounded-lg overflow-hidden border border-gray-200 transition-transform transform hover:scale-105"
           >
             <div className="relative">
               {story["hero-image-s3-key"] && (
@@ -49,19 +58,36 @@ export default function Home() {
               )}
             </div>
             <div className="p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">{story.headline}</h2>
-              <p className="text-gray-600 text-sm mb-4">{story["author-name"] || "Unknown Author"}</p>
+              <h2 className="text-2xl font-semibold text-sky-800 mb-4 leading-tight">
+                {story.headline}
+              </h2>
+              <p className="text-red-600 text-sm mb-4">
+                {story["author-name"] || "Unknown Author"}
+              </p>
               {story["hero-image-caption"] && (
-                <p className="text-gray-600 text-sm italic mb-4">
+                <p className="text-gray-500 text-sm italic mb-4">
                   {story["hero-image-caption"]}
                 </p>
+               
               )}
-              <div className="flex justify-between items-center mt-4">
+              {story.tags && story.tags.length > 0 && (
+                <div className="mt-4">
+                  <ul className="list-disc pl-5 text-gray-600 text-sm">
+                    {story.tags.map((tag) => (
+                      <li key={tag.id} className="mb-1">
+                        <strong className="text-gray-800 bg-red-200">{tag.name}</strong>
+                       
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <div className="flex justify-between items-center mt-6">
                 <a
                   href={story.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline text-sm"
+                  className="text-sm font-semibold text-blue-600 hover:text-yellow-500 hover:underline"
                 >
                   Read Full Story
                 </a>
